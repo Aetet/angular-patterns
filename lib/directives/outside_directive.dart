@@ -2,12 +2,9 @@ import 'package:angular2/angular2.dart';
 import 'dart:html';
 
 @Directive(
-  selector: '[myHighlight]'
+  selector: '[outsideClickable]'
 )
 class OutsideClickDirective implements AfterViewInit, OnDestroy {
-  @Input('some') String something;
-  @Input('any') String anything;
-  @Input('myHighlight') String high;
   @Output('clickOutside') EventEmitter eventEmitter = new EventEmitter();
 
   ElementRef el;
@@ -27,11 +24,8 @@ class OutsideClickDirective implements AfterViewInit, OnDestroy {
   }
 
   onWindowClick(MouseEvent e) {
-    if (el.nativeElement.contains(e.target)) {
-      print('We click inside');
-    } else {
+    if (!el.nativeElement.contains(e.target)) {
       eventEmitter.emit(e);
-      print('We click outside');
     }
   }
 }
