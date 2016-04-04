@@ -2,28 +2,23 @@ import 'package:angular2/angular2.dart';
 import 'dart:html';
 
 @Directive(
-  selector: '[outsideClickable]'
+  selector: '[outsideClickable]',
+  host: const {
+    '(document:mousedown)': r'onWindowClick($event)',
+    '(document:touchstart)': r'onWindowClick($event)'
+  }
 )
-class OutsideClickDirective implements AfterViewInit, OnDestroy {
+class OutsideClickDirective {
   @Output('clickOutside') EventEmitter eventEmitter = new EventEmitter();
 
   ElementRef el;
-  OutsideClickDirective(ElementRef el) {
+  ApplicationRef appRef;
+  OutsideClickDirective(ElementRef el, ApplicationRef appRef) {
     this.el = el;
+    this.appRef = appRef;
   }
 
-  @override
-  ngAfterViewInit() {
-    window.addEventListener('mousedown', onWindowClick);
-    window.addEventListener('touchstart', onWindowClick);
-  }
-
-  ngOnDestroy() {
-    window.removeEventListener('mousedown', onWindowClick);
-    window.removeEventListener('touchstart', onWindowClick);
-  }
-
-  onWindowClick(MouseEvent e) {
+  onWindowClick(Event e) {
     if (!el.nativeElement.contains(e.target)) {
       eventEmitter.emit(e);
     }
